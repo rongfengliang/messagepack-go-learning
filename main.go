@@ -11,7 +11,6 @@ import (
 
 func main() {
 	var buf bytes.Buffer
-
 	myPerson := pkg.Person{
 		Name:    "荣锋亮",
 		Address: "beijing",
@@ -22,11 +21,16 @@ func main() {
 		panic("encode some wrong" + err.Error())
 	}
 	var dstPerson pkg.Person
+	var dstPerson2 *pkg.Person = &pkg.Person{}
 	err = msgpack.Unmarshal(buf.Bytes(), &dstPerson)
+	datas, err := dstPerson2.UnmarshalMsg(buf.Bytes())
 	if err != nil {
 		panic("uncode:" + err.Error())
 	}
+	if len(datas) > 0 {
+		log.Panicf("%d bytes left over after UnmarshalMsg(): %q", len(datas), datas)
+	}
 	log.Println("from msgp: ", string(buf.Bytes()))
-	log.Printf("%v", dstPerson)
+	log.Printf("msgpack:%v,msgp: %v", dstPerson, *dstPerson2)
 	log.Println("from msgpack:", dstPerson.Name)
 }
